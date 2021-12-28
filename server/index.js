@@ -3,12 +3,7 @@ const socketio = require('socket.io')
 const http = require('http')
 const cors = require('cors')
 const router = require('./router')
-const {
-  addUser,
-  removeUser,
-  getUser,
-  getUsersInRoom,
-} = require('./users')
+const { addUser, removeUser, getUser, getUsersInRoom } = require('./users')
 
 const app = express()
 const server = http.createServer(app)
@@ -67,11 +62,21 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     const user = removeUser(socket.id)
 
-    user &&
-      io.to(user.room).emit('message', {
-        user: 'admin',
-        text: `${user.name} has left`,
-      })
+    user && io.to(user.room).emit('message', {
+      user: 'admin',
+      text: `${user.name} has left`,
+    })
+  })
+
+  socket.on('clearRoom', () => {
+    const user = getUser(socket.id)
+    const users = getUsersInRoom(user.room)
+    users.forEach(user => removeUser(user))
+
+    io.to(user.room).emit('message', {
+      user: 'admin',
+      text: '채팅이 종료되었습니다',
+    })
   })
 })
 

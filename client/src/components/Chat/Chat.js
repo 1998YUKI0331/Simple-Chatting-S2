@@ -52,14 +52,21 @@ const Chat = ({ location }) => {
         setMessage('')
       )
     }
-
     setMessage('')
+  }
+
+  const clear = () => {
+    if (room) {
+      socket.emit('clearRoom', room, () =>
+      clear('')
+      )
+    }
   }
 
   return (
     <div className="container__wrapper">
       <div className="chat__container">
-        <InfoBar room={room} />
+        <InfoBar room={room} clear={clear}/>
         <Messages messages={messages} name={name} />
         <Input
           message={message}
