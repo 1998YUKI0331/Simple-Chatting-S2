@@ -5,9 +5,13 @@ const Message = ({ message: { user, text }, name }) => {
   let isSentByCurrentUser = false
 
   const trimName = name.trim().toLowerCase()
-
   if (user === trimName) {
     isSentByCurrentUser = true
+  }
+
+  const clickedBtn = (e) => {
+    window.location.href = "/"
+    e.stopPropagation()
   }
 
   return isSentByCurrentUser ? (
@@ -20,6 +24,14 @@ const Message = ({ message: { user, text }, name }) => {
       </div>
     </div>
   ) : (
+    text === "채팅이 종료되었습니다" ?
+    <div className='popup'>
+      <div className='popup-inner'>
+        <button onClick={clickedBtn}>
+          확인</button>
+      </div>
+    </div>
+    :
     <div className="messageContainer justifyStart">
       <div className="messageBox backgroundLight">
         <p className="messageText colorDark">
