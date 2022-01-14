@@ -1,5 +1,5 @@
 import './Message.css'
-import ReactEmoji from 'react-emoji'
+import parse from 'html-react-parser';
 
 const Message = ({ message: { user, text }, name }) => {
   let isSentByCurrentUser = false
@@ -14,9 +14,16 @@ const Message = ({ message: { user, text }, name }) => {
     e.stopPropagation()
   }
 
-  const checkUrlForm = (strUrl) => {
+  const checkUrlForm = (text) => {
     let expUrl = /^http[s]?\:\/\//i;
-    return expUrl.test(strUrl);
+
+    text.split(' ').forEach((item) => {
+      if (expUrl.test(item)) {
+        text = text.replace(item, `<a href=${item} target='_blank'>${item}</a>`);
+      }
+    });
+
+    return text;
   }
 
   return isSentByCurrentUser ? (
@@ -24,9 +31,7 @@ const Message = ({ message: { user, text }, name }) => {
       <p className="sentText pr-10">{trimName}</p>
       <div className="messageBox backgroundBlue">
         <p className="messageText">
-          {checkUrlForm(text) ?
-          (<a href={text} target='_blank'>{text}</a>) :
-          ReactEmoji.emojify(text)}
+          {parse(checkUrlForm(text))}
         </p>
       </div>
     </div>
@@ -42,9 +47,7 @@ const Message = ({ message: { user, text }, name }) => {
     <div className="messageContainer justifyStart">
       <div className="messageBox backgroundLight">
         <p className="messageText colorDark">
-          {checkUrlForm(text) ?
-          (<a href={text} target='_blank'>{text}</a>) :
-          ReactEmoji.emojify(text)}
+          {parse(checkUrlForm(text))}
         </p>
       </div>
       <p className="sentText pl-10">{user}</p>
