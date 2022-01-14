@@ -14,12 +14,19 @@ const Message = ({ message: { user, text }, name }) => {
     e.stopPropagation()
   }
 
+  const checkUrlForm = (strUrl) => {
+    let expUrl = /^http[s]?\:\/\//i;
+    return expUrl.test(strUrl);
+  }
+
   return isSentByCurrentUser ? (
     <div className="messageContainer justifyEnd">
       <p className="sentText pr-10">{trimName}</p>
       <div className="messageBox backgroundBlue">
         <p className="messageText">
-          {ReactEmoji.emojify(text)}
+          {checkUrlForm(text) ?
+          (<a href={text} target='_blank'>{text}</a>) :
+          ReactEmoji.emojify(text)}
         </p>
       </div>
     </div>
@@ -35,7 +42,9 @@ const Message = ({ message: { user, text }, name }) => {
     <div className="messageContainer justifyStart">
       <div className="messageBox backgroundLight">
         <p className="messageText colorDark">
-          {ReactEmoji.emojify(text)}
+          {checkUrlForm(text) ?
+          (<a href={text} target='_blank'>{text}</a>) :
+          ReactEmoji.emojify(text)}
         </p>
       </div>
       <p className="sentText pl-10">{user}</p>
