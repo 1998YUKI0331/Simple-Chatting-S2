@@ -15,6 +15,7 @@ const Chat = ({ location }) => {
   const [message, setMessage] = useState('')
   const [messages, setMessages] = useState([])
   const [users, setUsers] = useState('');
+  const [notice, setNotice] = useState('');
 
   useEffect(() => {
     const { name, room } = queryString.parse(location.search)
@@ -42,7 +43,22 @@ const Chat = ({ location }) => {
     socket.on("roomData", ({ users }) => {
       setUsers(users);
     })
+
+    socket.on("noticeMessage", (notice) => {
+      setNotice(notice.text);
+      console.log(notice.text);
+    })
   }, [])
+
+  const sendNotice = (event) => {
+    event.preventDefault()
+
+    if (notice) {
+      socket.emit('sendNotice', notice, () =>
+        setNotice(notice)
+      )
+    }
+  }
 
   const sendMessage = (event) => {
     event.preventDefault()
@@ -67,7 +83,10 @@ const Chat = ({ location }) => {
     <div className="container__wrapper">
       <div className="chat__container">
         <InfoBar room={room} clear={clear}/>
-        <Messages messages={messages} name={name} />
+        <Messages 
+          messages={messages} name={name} 
+          notice={notice} setNotice={setNotice} sendNotice={sendNotice}
+        />
         <Input
           message={message}
           setMessage={setMessage}

@@ -59,6 +59,18 @@ io.on('connection', (socket) => {
     callback()
   })
 
+  socket.on('sendNotice', (notice, callback) => {
+    const user = getUser(socket.id)
+
+    io.to(user.room).emit('noticeMessage', {
+      user: user.name,
+      text: notice,
+    })
+    
+    console.log(notice)
+    callback()
+  })
+
   socket.on('disconnect', () => {
     const user = removeUser(socket.id)
 
