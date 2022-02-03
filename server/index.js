@@ -3,7 +3,7 @@ const socketio = require('socket.io')
 const http = require('http')
 const cors = require('cors')
 const router = require('./router')
-const { addUser, removeUser, getUser, getUsersInRoom } = require('./users')
+const { addUser, removeUser, getUser, getUsersInRoom, getNoticeInRoom, setNoticeInRoom } = require('./users')
 
 const app = express()
 const server = http.createServer(app)
@@ -41,6 +41,11 @@ io.on('connection', (socket) => {
       users: getUsersInRoom(user.room),
     })
 
+    io.to(user.room).emit('noticeMessage', {
+      user: user.name,
+      text: getNoticeInRoom(user.room),
+    })
+
     callback()
   })
 
@@ -64,10 +69,9 @@ io.on('connection', (socket) => {
 
     io.to(user.room).emit('noticeMessage', {
       user: user.name,
-      text: notice,
+      text: setNoticeInRoom(user.room, notice),
     })
-    
-    console.log(notice)
+
     callback()
   })
 

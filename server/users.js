@@ -1,4 +1,5 @@
 let users = []
+let rooms = {}  //{클럽 이름: 공지, 클럽 이름: 공지 ...} 즉, rooms[클럽이름] = 공지
 
 const addUser = ({ id, name, room }) => {
   name = name.trim().toLowerCase()
@@ -13,6 +14,10 @@ const addUser = ({ id, name, room }) => {
   }
   if (existingUser) {
     return { error: 'Username already taken' }
+  }
+  if (!(room in rooms)) {
+    rooms[room] = ""
+    console.log(rooms)
   }
 
   const user = { id, name, room }
@@ -38,9 +43,12 @@ const getUser = (id) => {
 const getUsersInRoom = (room) =>
   users.filter((user) => user.room === room)
 
-module.exports = {
-  addUser,
-  removeUser,
-  getUser,
-  getUsersInRoom,
+const getNoticeInRoom = (room) => 
+  rooms[room]
+
+const setNoticeInRoom = (room, notice) => {
+  rooms[room] = notice
+  return rooms[room]
 }
+
+module.exports = { addUser, removeUser, getUser, getUsersInRoom, getNoticeInRoom, setNoticeInRoom }
